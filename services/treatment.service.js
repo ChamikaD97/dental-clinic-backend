@@ -76,3 +76,4 @@ export function getTreatments(patient_id) {
 
   return treatments;
 }
+

@@ -11,11 +11,17 @@ export function getDailyAppointments(date) {
 
   const dailyAppointments = appointments
     .filter((appointment) => appointment.appointment_date === date)
-    .map((appointment) => {
+    .sort((a, b) =>
+      String(a.appointment_time || "").localeCompare(
+        String(b.appointment_time || "")
+      )
+    )
+    .map((appointment, index) => {
       const patient = patients.find((p) => p.id === appointment.patient_id);
       const dentist = dentists.find((d) => d.id === appointment.dentist_id);
 
       return {
+        queue_no: index + 1,
         appointment_id: appointment.id,
         time: appointment.appointment_time,
         patient_name: patient?.name || "",

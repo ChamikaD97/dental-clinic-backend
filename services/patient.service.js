@@ -101,3 +101,83 @@ export function getPatientHistory(patientId) {
     })),
   };
 }
+
+export function updatePatient(id, data) {
+  const patients = readSheet("Patients");
+
+  const index = patients.findIndex((patient) => patient.id === id);
+
+  if (index === -1) {
+    throw appError("Patient not found", 404);
+  }
+
+  const existingPatient = patients[index];
+
+  patients[index] = {
+    ...existingPatient,
+    name: data.name ?? existingPatient.name,
+    phone: data.phone ?? existingPatient.phone,
+    age: data.age ?? existingPatient.age,
+    gender: data.gender ?? existingPatient.gender,
+    address: data.address ?? existingPatient.address,
+    updated_at: now(),
+  };
+
+  writeSheet("Patients", patients);
+
+  return patients[index];
+}
+
+export function deletePatient(id) {
+  const patients = readSheet("Patients");
+
+  const index = patients.findIndex((patient) => patient.id === id);
+
+  if (index === -1) {
+    throw appError("Patient not found", 404);
+  }
+
+  const deletedPatient = patients[index];
+
+  patients.splice(index, 1);
+  writeSheet("Patients", patients);
+
+  return deletedPatient;
+}
+
+export function getPatientStatistics() {
+  const patients = readSheet("Patients");
+
+  const totalPatients = patients.length;
+
+  const malePatients = patients.filter(
+    (patient) => String(patient.gender).toLowerCase() === "male"
+  ).length;
+
+  const femalePatients = patients.filter(
+    (patient) => String(patient.gender).toLowerCase() === "female"
+  ).length;
+
+  const totalAge = patients.reduce((sum, patient) => {
+    const age = Number(patient.age) || 0;
+    return sum + age;
+  }, 0);
+
+  const averageAge =
+    totalPatients > 0 ? Number((totalAge / totalPatients).toFixed(1)) : 0;
+
+  return {
+    total_patients: totalPatients,
+    male_patients: malePatients,
+    female_patients: femalePatients,
+    average_age: averageAge,
+  };
+}
+
+export function getRecentPatients() {
+  const patients = readSheet("Patients");
+
+  return patients
+    .sort((a, b) => Number(b.created_at) - Number(a.created_at))
+    .slice(0, 5);
+}

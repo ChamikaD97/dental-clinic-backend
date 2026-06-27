@@ -67,10 +67,67 @@ function getPatientHistory(req, res) {
   }
 }
 
+function updatePatient(req, res) {
+  try {
+    const patient = patientService.updatePatient(req.params.id, req.body);
+
+    res.json({
+      success: true,
+      message: "Patient updated successfully",
+      data: patient,
+    });
+  } catch (error) {
+    sendError(res, error, "Failed to update patient");
+  }
+}
+
+function deletePatient(req, res) {
+  try {
+    patientService.deletePatient(req.params.id);
+
+    res.json({
+      success: true,
+      message: "Patient deleted successfully",
+    });
+  } catch (error) {
+    sendError(res, error, "Failed to delete patient");
+  }
+}
+
+function getPatientStatistics(req, res) {
+  try {
+    const stats = patientService.getPatientStatistics();
+
+    res.json({
+      success: true,
+      data: stats,
+    });
+  } catch (error) {
+    sendError(res, error, "Failed to fetch patient statistics");
+  }
+}
+
+function getRecentPatients(req, res) {
+  try {
+    const patients = patientService.getRecentPatients();
+
+    res.json({
+      success: true,
+      data: patients,
+    });
+  } catch (error) {
+    sendError(res, error, "Failed to fetch recent patients");
+  }
+}
+
 export default {
   createPatient,
   getAllPatients,
   searchPatients,
   getPatientById,
   getPatientHistory,
+  updatePatient,
+  deletePatient,
+  getPatientStatistics,
+  getRecentPatients,
 };

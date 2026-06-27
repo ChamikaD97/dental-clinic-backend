@@ -15,7 +15,7 @@ function createTreatment(req, res) {
   }
 }
 
-function getTreatments(req, res) {
+function getTreatments(req, res) {  
   try {
     const treatments = treatmentService.getTreatments(req.query.patient_id);
 
