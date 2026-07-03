@@ -214,19 +214,20 @@ export function getAppointmentById(id) {
     throw appError("Appointment not found", 404);
   }
 
-const patient = patients.find((p) => p.id === appointment.patient_id);
-const dentist = dentists.find((d) => d.id === appointment.dentist_id);
+  const patient = patients.find((p) => p.id === appointment.patient_id);
+  const dentist = dentists.find((d) => d.id === appointment.dentist_id);
 
-const treatment = treatments.find((treatment) => {
-  const treatmentAppointmentId =
-    treatment.appointment_id ||
-    treatment.appointmentId ||
-    treatment.appointmentID ||
-    "";
+  const treatment = treatments.find((treatment) => {
+    const treatmentAppointmentId =
+      treatment.appointment_id ||
+      treatment.appointmentId ||
+      treatment.appointmentID ||
+      "";
 
-  return String(treatmentAppointmentId).trim() === String(appointment.id).trim();
-});
-
+    return (
+      String(treatmentAppointmentId).trim() === String(appointment.id).trim()
+    );
+  });
   const sameDayAppointments = appointments
     .filter((item) => item.appointment_date === appointment.appointment_date)
     .sort((a, b) => {
@@ -236,7 +237,7 @@ const treatment = treatments.find((treatment) => {
     });
 
   const queueIndex = sameDayAppointments.findIndex(
-    (item) => item.id === appointment.id
+    (item) => item.id === appointment.id,
   );
 
   return {
@@ -252,17 +253,12 @@ const treatment = treatments.find((treatment) => {
     address: patient?.address || "",
 
     treatment_id: treatment?.id || "",
-    treatment_charge:
-      treatment?.treatment_charge ||
-      treatment?.charge ||
-      treatment?.total_amount ||
-      "",
-    treatment_name:
-      treatment?.treatment_name ||
-      treatment?.treatment_type ||
-      treatment?.description ||
-      "",
+    treatment_performed: treatment?.treatment_performed || "",
 
+    diagnosis: treatment?.diagnosis || "",
+    prescription: treatment?.prescription,
+    next_appointment_date: treatment?.next_appointment_date,
+    doctor_notes: treatment?.doctor_notes,
     dentist_id: appointment.dentist_id,
     dentist_name: dentist?.name || "",
 
